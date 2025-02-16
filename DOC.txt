@@ -1,33 +1,33 @@
 LOGGER.
 
 log: SAT does not work on circle2circle
-    The solution is to this is not SAT but getting the length between the center of two circle (the distance) and
+    The solution to this is not SAT but getting the length between the center of two circle (the distance) and
     check if the sum of the radius of two circle is greater then the distance then is colliding, formula
     SUM of two rad > distance = length between the center of two circle is greater than sum of the radius of two circle then is not colliding.
     Kinda similar to the triangle inequality.
 
 log: SAT on rectangle
     With the help of the Dot product visualizer and the AABB prototype, making the SAT collision system became least harder.
-    the SAT works by getting the normal of each edge, this is doned by getting the direction of two vertex of a shape and turn them into a normal by
-    swtiching the value x1=x and y1=y into x1=y and y1=x then negate just one of the component making it negative. next get the min and max
-    of two rectangle, adopted by AABB collsion where min and max of each shape needs to be found. use the dot product to calcuate which 
+    the SAT works by getting the normal of each edge, this is donned by getting the direction of two vertex of a shape and turn them into a normal by
+    switching the value x1=x and y1=y into x1=y and y1=x then negate just one of the component making it negative. next get the min and max
+    of two rectangle, adopted by AABB collision where min and max of each shape needs to be found. use the dot product to calculate which 
     vertex has the min value and the vertex that yields the maximum value. then with the logic of AABB of comparing the min and max value of 
     two rectangles to prove if they are colliding.
 
 
-log 15/02/2025: Why pass by reference?
+log 15/02/2025: Why pass by reference? issues with the unknown.
     About the why pass by reference of void project(rectangle &a, Vector2 normal,float &min,float &max) and
-    bool iscollideRec(rectangle &a, rectangle &b), the activity of these two function will not work correct if I use pass by variable rectangle.
+    bool iscollideRec(rectangle &a, rectangle &b), the activity of these two function will not work correctly if I use pass by variable rectangle.
     I have no intention on modifying the properties, only access the getter functions of the rect, specifically the func that returns the vector pos of each
-    given vertex, after going through stackoverflow in pass by value vs pass by reference and comfirmation of Chatgpt. I figured that the issue is the inconsistency of
-    data that the function trying to access, I still have to investigate what and how the data is mutated during the function call. Chatgpt says that the incosistency of data
-    has smth to do with how the cache works in my program.
+    given vertex, after going through Stackoverflow in pass by value vs pass by reference and confirmation of Chatgpt. I figured that the issue is the inconsistency of
+    data that the function trying to access, I still have to investigate what and how the data is mutated during the function call. Chatgpt says that the inconsistency of data
+    has smth to do with how the cache memory works in my program.
 
 log 16/02/2025: Pass by value worked!
     By contradicting the pass by ref and modifying the getvertex().
     upon further investigation and experimenting by, I figured that the pass by value also works!, if the getter of the rectangle getvertex returns the address of the vertex
     and can be accessed through the use of pointers, EX for rectangle a is declared in the code, to use the getvertex func, do *a.getvertex(n) if getvertex(n) returns &vert[n].
-    This discover however does not give insight on how the data is mutated during func call.
+    This discover however does not give further insight on how the data is mutated during func call.
 
     I decided to keep the pass by reference version for optimization as stated from stackoverflow about pass by value vs pass by ref.
 
@@ -39,4 +39,4 @@ log 16/02/2025: Circle and rectangle collision system
     of the first vertex to the second vertex, then get the dot product of that direction with the circle's position. Kinda similar to the SAT collision system but
     considering only the center of the circle.
 
-    during implementing the func I decided to use pass by reference for optimization. Iam kinda enlighten.
+    during implementing the func I decided to use pass by reference for optimization. Am kinda enlighten.
