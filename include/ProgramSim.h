@@ -54,7 +54,7 @@ public:
     }
 };
 class rectangle: public shape{
-    protected:
+    public:
         Vector2 size;
         Vector2 centerRotation;
         Vector2 vert [4];
@@ -162,12 +162,8 @@ bool operator==(Color &a, const Color &b){ //for collision debugging
 
 //interfaces
 
-/** About the project and iscollideRec functions:
- * Need to understand by pass by reference of rectangles paramenter in project and iscollideRec works, Maybe it has smth to do with how cache works?
- * in contrast to the iscollideCircle func which does not need to be passing reference. Why?
- */
-void project(rectangle &a, Vector2 normal,float &min,float &max);//why pass by reference? when I dont modify the rec itself but access the internal data
-bool iscollideRec(rectangle &a, rectangle &b);// same here.
+void project(rectangle &a, Vector2 normal,float &min,float &max);
+bool iscollideRec(rectangle &a, rectangle &b);
 
 bool iscollideCircle(circle b,circle a);
 Vector2 minimumvalue(circle b);

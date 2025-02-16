@@ -1,7 +1,7 @@
 
 #include <raylib.h>
 #include <ProgramSim.h>
-#include <iostream>
+
 
 
 class initshapes{
@@ -29,6 +29,30 @@ bool iscollideCircle(circle a,circle b){
     float distance = Vector2Distance(a.get_pos(), b.get_pos());
     return distance < (a.get_rad() + b.get_rad());
 }
+
+//collision circle and rec
+Vector2 closestPointOnLine(Vector2 v1, Vector2 v2, Vector2 p) {
+    Vector2 lineVec = Vector2Subtract(v2, v1);
+    Vector2 pointVec = Vector2Subtract(p, v1); //only get the direction of v1 from the p's position
+    float t = dotproduct(pointVec, lineVec) / dotproduct(lineVec, lineVec);
+    t = (t < 0) ? 0 : (t > 1) ? 1 : t; //Only range between 0 to 1 so that I can multiply it to the vector between vertex[n] and vertex[n+1]
+    Vector2 closest = Vector2Add(v1, Vector2Scale(lineVec, t));//add back the v1 to add back original positon.
+    return closest;
+}
+bool iscollideCircleRec(circle a, rectangle &b) {
+    for (int i = 0; i < 4; i++) {
+        Vector2 v1 = b.get_vertex(i);
+        Vector2 v2 = b.get_vertex((i + 1) % 4);
+        Vector2 closestPoint = closestPointOnLine(v1, v2, a.get_pos());
+        if (Vector2Distance(a.get_pos(), closestPoint) <= a.get_rad()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 //collision for Rectangle usig SAT
 void project(rectangle &a, Vector2 normal,float &min,float &max){
     min = INFINITY;
@@ -84,6 +108,7 @@ void playerRec::update(Vector2 in){
     for(int i = 0; i <=3;i++){
         vert[i].x += velocity.x; vert[i].y += velocity.y;
     }
+    centerRotation.x += velocity.x; centerRotation.y += velocity.y;
 }
 Vector2 player::get_playerpos(){
     return position;
@@ -120,16 +145,18 @@ int main(){
         if(IsKeyPressed(KEY_C)){
             playerShape++;
         }
+        int rota = ((int)IsKeyDown(KEY_LEFT)-(int)IsKeyDown(KEY_RIGHT));
+        PlayerRec.rotate(rota*0.01);
 
         //drawing
         BeginDrawing();
-        DrawText("press c to switch shapes",20, 50,24,WHITE);
+        DrawText("press c to switch shapes and arrow keys to rotate",20, 50,24,WHITE);
         Shapes.r1.rotate(0.005);
         Shapes.c1.drawshape();
         Shapes.r1.drawshape();
         Shapes.r2.drawshape();
         DrawCircleV(Shapes.r1.avCenter(),10,RED);
-        DrawCircleV(Shapes.r2.avCenter(),10,RED);
+        
 
 
         //drawplayer
@@ -146,13 +173,23 @@ int main(){
             }else{
                 Shapes.c1.color = WHITE;
             }
+            if(iscollideCircleRec(playerCircle,Shapes.r1)){
+                Shapes.r1.color = RED;
+            }else{
+                Shapes.r1.color = WHITE;
+            }
+            if(iscollideCircleRec(playerCircle,Shapes.r2)){
+                Shapes.r2.color = RED;
+            }else{
+                Shapes.r2.color = WHITE;
+            }
             break;
         case 2: //rectangle
             PlayerRec.drawplayer();
             PlayerRec.update(PlayerRec.controls());
             PlayerRec.set_pos(PlayerRec.get_playerpos());
 
-            
+
             if(iscollideRec(PlayerRec,Shapes.r1)){
                 Shapes.r1.drawshape(RED);
 
@@ -163,6 +200,11 @@ int main(){
 
             }else{
                 Shapes.r2.color = WHITE;
+            }
+            if(iscollideCircleRec(Shapes.c1,PlayerRec)){
+                Shapes.c1.drawshape(RED);
+            }else{
+                Shapes.c1.color = WHITE;
             }
             break;
         default:
